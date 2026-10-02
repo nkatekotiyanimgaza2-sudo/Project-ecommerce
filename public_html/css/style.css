@@ -1,0 +1,258 @@
+/* Reset basic styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* HEADER */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background-color: #1a2a3a; /* Dark blue */
+    color: white;
+}
+
+.logo h1 {
+    font-size: 24px;
+    margin-bottom: 2px;
+}
+
+.logo p {
+    font-size: 10px;
+    color: #ccc;
+}
+
+.search-bar {
+    display: flex;
+    width: 40%;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px 0 0 4px;
+}
+
+.search-bar button {
+    padding: 10px 15px;
+    border: none;
+    background-color: #e0e0e0;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+}
+
+.header-icons span {
+    margin-left: 20px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* NAVIGATION */
+.main-nav {
+    background-color: #24374b;
+    padding: 10px 40px;
+}
+
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.main-nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/* LAYOUT: Sidebar + Main Content */
+.main-container {
+    display: flex;
+    padding: 30px 40px;
+    gap: 30px;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 250px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    height: fit-content;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.sidebar h3 {
+    font-size: 16px;
+    margin-bottom: 15px;
+    margin-top: 20px;
+    color: #1a2a3a;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.sidebar h3:first-child {
+    margin-top: 0;
+}
+
+.category-list, .size-list {
+    list-style: none;
+    margin-bottom: 15px;
+}
+
+.category-list li, .size-list li {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.category-list a {
+    text-decoration: none;
+    color: #555;
+    display: block;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.category-list a:hover, .category-list a.active {
+    background-color: #eef2f7;
+    color: #1a2a3a;
+    font-weight: bold;
+}
+
+.size-list input {
+    margin-right: 10px;
+}
+
+.price-slider {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.clear-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #1a2a3a;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+/* PRODUCT GRID */
+.product-section {
+    flex: 1;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    font-size: 24px;
+    color: #1a2a3a;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+/* PRODUCT CARD */
+.product-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    text-align: left;
+    transition: transform 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.product-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.product-card h3 {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.product-card .price {
+    font-size: 16px;
+    font-weight: bold;
+    color: #1a2a3a;
+    margin-bottom: 5px;
+}
+
+.product-card .rating {
+    font-size: 12px;
+    color: #f39c12;
+    margin-bottom: 10px;
+}
+
+.add-to-cart-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #1a2a3a;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.add-to-cart-btn:hover {
+    background-color: #2c4258;
+}
+
+/* FOOTER */
+.main-footer {
+    background-color: #1a2a3a;
+    color: white;
+    padding: 40px;
+    margin-top: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-links a {
+    color: #ccc;
+    text-decoration: none;
+    margin: 0 5px;
+    font-size: 12px;
+}
+
+.copyright {
+    width: 100%;
+    text-align: right;
+    font-size: 12px;
+    color: #888;
+    margin-top: 20px;
+}
+

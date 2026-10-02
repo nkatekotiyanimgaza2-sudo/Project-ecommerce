@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>AllFit Fashion - Product Catalogue</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <script type="text/javascript" src="js/catalogue.js"></script>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="main-header">
+        <div class="logo">
+            <h1>AllFit Fashion</h1>
+            <p>Trendy Looks. Always.</p>
+        </div>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search for products..." />
+            <button type="button">🔍</button>
+        </div>
+        <div class="header-icons">
+            <span>👤 Login / Register</span>
+            <span>♡ Wishlist (0)</span>
+            <span>🛒 Cart (<span id="cartCount">0</span>)</span>
+        </div>
+    </header>
+
+    <!-- NAVIGATION -->
+    <nav class="main-nav">
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Shop</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <div class="main-container">
+        
+        <!-- SIDEBAR FILTERS -->
+        <aside class="sidebar">
+            <h3>Categories</h3>
+            <ul class="category-list">
+                <li><a href="#" class="active" data-category="all">All Products</a></li>
+                <li><a href="#" data-category="Women">Women</a></li>
+                <li><a href="#" data-category="Men">Men</a></li>
+                <li><a href="#" data-category="Children">Children</a></li>
+                <li><a href="#" data-category="Plus Size">Plus Size</a></li>
+                <li><a href="#" data-category="Shoes">Shoes</a></li>
+                <li><a href="#" data-category="Accessories">Accessories</a></li>
+            </ul>
+
+            <h3>Filter by Price</h3>
+            <input type="range" min="100" max="1000" value="500" class="price-slider" />
+            <p>R100 - R1000+</p>
+
+            <h3>Filter by Size</h3>
+            <ul class="size-list">
+                <li><input type="checkbox" /> XS</li>
+                <li><input type="checkbox" /> S</li>
+                <li><input type="checkbox" /> M</li>
+                <li><input type="checkbox" /> L</li>
+                <li><input type="checkbox" /> XL</li>
+                <li><input type="checkbox" /> XXL</li>
+            </ul>
+            
+            <button type="button" class="clear-btn">Clear Filters</button>
+        </aside>
+
+        <!-- PRODUCT GRID -->
+        <main class="product-section">
+            <div class="section-header">
+                <h2>Product Catalogue</h2>
+                <select>
+                    <option>Sort by: Newest First</option>
+                    <option>Price: Low to High</option>
+                    <option>Price: High to Low</option>
+                </select>
+            </div>
+            
+            <div class="product-grid" id="productGrid">
+                <!-- JavaScript will inject product cards here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <div class="footer-logo">
+            <h2>AllFit Fashion</h2>
+            <p>Trendy Looks. Always.</p>
+        </div>
+        <div class="footer-links">
+            <a href="#">Terms &amp; Conditions</a> | | 
+            <a href="#">Privacy Policy</a> | 
+            <a href="#">Shipping &amp; Returns</a>
+        </div>
+        <div class="footer-social">
+            <span>📷</span> <span>📘</span> <span>🐦</span>
+        </div>
+        <p class="copyright">© 2026 AllFit Fashion. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
