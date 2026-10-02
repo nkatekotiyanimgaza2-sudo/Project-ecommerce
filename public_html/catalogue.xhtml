@@ -5,7 +5,7 @@
     <title>AllFit Fashion - Product Catalogue</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="css/style.css" />
-    <script type="text/javascript" src="js/catalogue.js"></script>
+    <script type="text/javascript" src="js/catalogue.js" defer="defer"></script>
 </head>
 <body>
 
@@ -15,24 +15,23 @@
             <h1>AllFit Fashion</h1>
             <p>Trendy Looks. Always.</p>
         </div>
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Search for products..." />
-            <button type="button">🔍</button>
-        </div>
+        <form class="search-bar" id="searchForm" action="#" method="get" role="search">
+            <input type="search" id="searchInput" name="q" placeholder="Search products or categories..." />
+            <button type="submit" aria-label="Search products">🔍</button>
+        </form>
         <div class="header-icons">
-            <span>👤 Login / Register</span>
-            <span>♡ Wishlist (0)</span>
-            <span>🛒 Cart (<span id="cartCount">0</span>)</span>
+            <button type="button" class="account-button" id="accountButton">👤 Login / Register</button>
+            <button type="button" class="wishlist-header-button" id="wishlistButton" aria-pressed="false">♡ Wishlist (0)</button>
+            <a href="cart.xhtml">🛒 Cart (<span id="cartCount">0</span>)</a>
         </div>
     </header>
 
     <!-- NAVIGATION -->
     <nav class="main-nav">
         <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Shop</a></li>
-            <li><a href="#">About Us</a></li>
-            <li><a href="#">Contact</a></li>
+            <li><a href="#shop">Shop</a></li>
+            <li><a href="#about">Our story</a></li>
+            <li><a href="mailto:nkatekotiyanimgaza2@gmail.com?subject=AllFit%20Fashion%20enquiry">Contact</a></li>
         </ul>
     </nav>
 
@@ -42,49 +41,116 @@
         <!-- SIDEBAR FILTERS -->
         <aside class="sidebar">
             <h3>Categories</h3>
-            <ul class="category-list">
-                <li><a href="#" class="active" data-category="all">All Products</a></li>
-                <li><a href="#" data-category="Women">Women</a></li>
-                <li><a href="#" data-category="Men">Men</a></li>
-                <li><a href="#" data-category="Children">Children</a></li>
-                <li><a href="#" data-category="Plus Size">Plus Size</a></li>
-                <li><a href="#" data-category="Shoes">Shoes</a></li>
-                <li><a href="#" data-category="Accessories">Accessories</a></li>
-            </ul>
+            <ul class="category-list" id="categoryList"></ul>
 
             <h3>Filter by Price</h3>
-            <input type="range" min="100" max="1000" value="500" class="price-slider" />
-            <p>R100 - R1000+</p>
+            <input type="range" id="priceFilter" min="100" max="1500" value="1500" class="price-slider" />
+            <p>Up to <span id="priceFilterLabel">R1500+</span></p>
 
             <h3>Filter by Size</h3>
-            <ul class="size-list">
-                <li><input type="checkbox" /> XS</li>
-                <li><input type="checkbox" /> S</li>
-                <li><input type="checkbox" /> M</li>
-                <li><input type="checkbox" /> L</li>
-                <li><input type="checkbox" /> XL</li>
-                <li><input type="checkbox" /> XXL</li>
-            </ul>
+            <details class="size-filter-panel">
+                <summary>Choose sizes</summary>
+                <ul class="size-list" id="sizeFilterList"></ul>
+            </details>
             
             <button type="button" class="clear-btn">Clear Filters</button>
         </aside>
 
         <!-- PRODUCT GRID -->
-        <main class="product-section">
+        <main class="product-section" id="shop">
             <div class="section-header">
                 <h2>Product Catalogue</h2>
-                <select>
-                    <option>Sort by: Newest First</option>
-                    <option>Price: Low to High</option>
-                    <option>Price: High to Low</option>
+                <select id="sortProducts" aria-label="Sort products">
+                    <option value="featured">Sort by: Featured</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="name">Name: A to Z</option>
                 </select>
             </div>
+            <p class="product-results" id="productResults" aria-live="polite"></p>
             
             <div class="product-grid" id="productGrid">
                 <!-- JavaScript will inject product cards here -->
             </div>
         </main>
     </div>
+
+    <div class="product-backdrop" id="productBackdrop" hidden="hidden">
+        <section class="product-dialog" role="dialog" aria-modal="true" aria-labelledby="productDetailName">
+            <button type="button" class="product-dialog-close" id="closeProductButton" aria-label="Close product details">×</button>
+            <img id="productDetailImage" src="" alt="" />
+            <div class="product-detail-info">
+                <p class="product-detail-category" id="productDetailCategory"></p>
+                <h2 id="productDetailName"></h2>
+                <p class="product-detail-price" id="productDetailPrice"></p>
+                <p class="product-detail-description" id="productDetailDescription"></p>
+                <p class="product-detail-rating" id="productDetailRating"></p>
+                <p class="product-detail-category" id="productDetailSubcategory"></p>
+                <label class="product-size-label" for="productDetailSize">Choose a size</label>
+                <select id="productDetailSize" aria-label="Choose a product size"></select>
+                <p class="product-detail-stock" id="productDetailStock" aria-live="polite"></p>
+                <p class="product-detail-message" id="productDetailMessage" aria-live="polite"></p>
+                <button type="button" class="add-to-cart-btn" id="productDetailAdd">Add to Cart</button>
+                <button type="button" class="product-detail-wishlist" id="productDetailWishlist">♡ Save</button>
+            </div>
+        </section>
+    </div>
+
+    <div class="account-backdrop" id="accountBackdrop" hidden="hidden">
+        <section class="account-dialog" role="dialog" aria-modal="true" aria-labelledby="accountTitle">
+            <button type="button" class="dialog-close" id="closeAccountButton" aria-label="Close">×</button>
+            <p class="account-kicker">ALLFIT FASHION</p>
+            <h2 id="accountTitle">Welcome back</h2>
+            <div class="account-modes" role="tablist" aria-label="Account action">
+                <button type="button" class="selected" id="loginMode" role="tab" aria-selected="true">Sign in</button>
+                <button type="button" id="registerMode" role="tab" aria-selected="false">Create account</button>
+            </div>
+            <form id="accountForm">
+                <label id="nameField" hidden="hidden">
+                    Full name
+                    <input id="accountName" name="name" type="text" autocomplete="name" />
+                </label>
+                <label>
+                    Email address
+                    <input id="accountEmail" name="email" type="email" autocomplete="email" required="required" />
+                </label>
+                <label>
+                    Password
+                    <input id="accountPassword" name="password" type="password" autocomplete="current-password" minlength="8" required="required" />
+                </label>
+                <label id="confirmField" hidden="hidden">
+                    Confirm password
+                    <input id="accountConfirm" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" />
+                </label>
+                <p class="account-message" id="accountMessage" role="status" aria-live="polite"></p>
+                <button type="submit" class="account-submit" id="accountSubmit">Sign in</button>
+            </form>
+        </section>
+    </div>
+
+    <section class="about-section" id="about">
+        <div class="about-copy">
+            <p class="section-eyebrow">THE PEOPLE BEHIND THE PICKS</p>
+            <h2>Good style should feel like you.</h2>
+            <p>AllFit Fashion began as a project shared by five students with one simple idea: make it easier to find clothes for real life, across ages, styles, and budgets.</p>
+            <p>Together, our team designed this catalogue to make discovering a new favourite feel welcoming and straightforward. We bring women's, men's, and kids' styles into one place, with clear product details and a little room to explore.</p>
+            <p>Every part of this website was shaped by our team of five students as we learned, shared ideas, and built AllFit Fashion together.</p>
+        </div>
+        <div class="about-mark" aria-hidden="true"><span>5</span><p>students<br />one shared idea</p></div>
+    </section>
+
+    <section class="contact-section" id="contact">
+        <div>
+            <p class="section-eyebrow">HERE TO HELP</p>
+            <h2>Let's talk.</h2>
+            <p>Questions about an item or an order? Reach our team by email.</p>
+        </div>
+        <div class="contact-links">
+            <a href="mailto:nkatekotiyanimgaza2@gmail.com">General enquiries <span>nkatekotiyanimgaza2@gmail.com</span></a>
+            <a href="mailto:nkatekotiyanimgaza2+support@gmail.com">Customer support <span>nkatekotiyanimgaza2+support@gmail.com</span></a>
+            <a href="mailto:nkatekotiyanimgaza2+orders@gmail.com">Orders <span>nkatekotiyanimgaza2+orders@gmail.com</span></a>
+        </div>
+    </section>
 
     <!-- FOOTER -->
     <footer class="main-footer">
@@ -93,9 +159,9 @@
             <p>Trendy Looks. Always.</p>
         </div>
         <div class="footer-links">
-            <a href="#">Terms &amp; Conditions</a> | | 
-            <a href="#">Privacy Policy</a> | 
-            <a href="#">Shipping &amp; Returns</a>
+            <a href="#shop">Shop</a> |
+            <a href="#about">Our story</a> |
+            <a href="#contact">Contact</a>
         </div>
         <div class="footer-social">
             <span>📷</span> <span>📘</span> <span>🐦</span>

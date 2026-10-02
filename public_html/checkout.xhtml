@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Checkout - AllFit Fashion</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="css/checkout.css" />
+    <script type="text/javascript" src="js/checkout.js" defer="defer"></script>
+</head>
+<body>
+    <header class="checkout-header">
+        <a href="catalogue.xhtml" class="checkout-brand">AllFit Fashion</a>
+        <span>Checkout</span>
+    </header>
+
+    <main class="checkout-shell" id="checkoutShell">
+        <div class="checkout-heading">
+            <a href="cart.xhtml" class="back-to-cart">Back to bag</a>
+            <p class="checkout-kicker">ALLFIT FASHION</p>
+            <h1>Complete your order</h1>
+        </div>
+
+        <div class="checkout-layout">
+            <form id="checkoutForm" class="checkout-form">
+                <fieldset>
+                    <legend>Delivery details</legend>
+                    <div class="checkout-fields">
+                        <label class="field-wide">
+                            Full name
+                            <input name="fullName" type="text" autocomplete="name" required="required" />
+                        </label>
+                        <label>
+                            Email address
+                            <input name="email" type="email" autocomplete="email" required="required" />
+                        </label>
+                        <label>
+                            Phone number
+                            <input name="phone" type="tel" autocomplete="tel" inputmode="tel" required="required" />
+                        </label>
+                        <label class="field-wide">
+                            Street address
+                            <input name="address" type="text" autocomplete="street-address" required="required" />
+                        </label>
+                        <label>
+                            City
+                            <input name="city" type="text" autocomplete="address-level2" required="required" />
+                        </label>
+                        <label>
+                            Postal code
+                            <input name="postalCode" type="text" autocomplete="postal-code" required="required" />
+                        </label>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Card details</legend>
+                    <div class="checkout-fields">
+                        <label class="field-wide">
+                            Name on card
+                            <input name="cardName" type="text" autocomplete="cc-name" required="required" />
+                        </label>
+                        <label class="field-wide">
+                            Card number
+                            <input id="cardNumber" name="cardNumber" type="text" inputmode="numeric" autocomplete="cc-number" maxlength="16" minlength="16" pattern="[0-9]{16}" required="required" />
+                        </label>
+                        <label>
+                            Expiry date
+                            <input id="cardExpiry" name="cardExpiry" type="month" autocomplete="cc-exp" required="required" />
+                        </label>
+                        <label>
+                            Security code
+                            <input name="cardCvv" type="password" inputmode="numeric" autocomplete="cc-csc" minlength="3" maxlength="4" pattern="[0-9]{3,4}" required="required" />
+                        </label>
+                    </div>
+                    <p class="card-error" id="cardError" role="status" aria-live="polite"></p>
+                </fieldset>
+
+                <p class="checkout-message" id="checkoutMessage" role="status" aria-live="polite"></p>
+                <button type="submit" class="place-order-button">Place order</button>
+            </form>
+
+            <aside class="order-summary">
+                <h2>Your bag</h2>
+                <p class="summary-count" id="summaryCount"></p>
+                <ul id="checkoutItems"></ul>
+                <div class="checkout-totals">
+                    <p>Items subtotal <strong id="checkoutSubtotal">R0.00</strong></p>
+                    <p id="checkoutDiscountLine" hidden="hidden">Discount <strong id="checkoutDiscount">-R0.00</strong></p>
+                    <p>Shipping (10%) <strong id="checkoutShipping">R0.00</strong></p>
+                    <p id="checkoutPriorityLine" hidden="hidden">Priority shipping <strong id="checkoutPriority">R15.00</strong></p>
+                    <p class="summary-total">Total <strong id="checkoutTotal">R0.00</strong></p>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <main class="checkout-complete" id="checkoutComplete" hidden="hidden">
+        <h1>Order receipt</h1>
+        <p class="receipt-status">Order accepted · payment simulated</p>
+        <dl class="receipt-details">
+            <div><dt>Order reference</dt><dd id="receiptNumber"></dd></div>
+            <div><dt>Date</dt><dd id="receiptDate"></dd></div>
+            <div><dt>Customer</dt><dd id="receiptCustomer"></dd></div>
+            <div><dt>Email</dt><dd id="receiptEmail"></dd></div>
+            <div><dt>Delivery address</dt><dd id="receiptAddress"></dd></div>
+        </dl>
+        <h2>Items</h2>
+        <ul class="receipt-items" id="receiptItems"></ul>
+        <dl class="receipt-breakdown">
+            <div><dt>Items subtotal</dt><dd id="receiptSubtotal"></dd></div>
+            <div id="receiptDiscountRow" hidden="hidden"><dt>Discount</dt><dd id="receiptDiscount"></dd></div>
+            <div><dt>Shipping (10%)</dt><dd id="receiptShipping"></dd></div>
+            <div id="receiptPriorityRow" hidden="hidden"><dt>Priority shipping</dt><dd id="receiptPriority"></dd></div>
+        </dl>
+        <p class="receipt-total">Order total <strong id="receiptTotal"></strong></p>
+        <p class="receipt-note">Your order has been recorded by the Java backend.</p>
+        <div class="receipt-actions">
+            <button type="button" id="printReceiptButton">Print receipt</button>
+            <a href="catalogue.xhtml">Continue shopping</a>
+        </div>
+    </main>
+</body>
+</html>

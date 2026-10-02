@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Shopping Cart - AllFit Fashion</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="css/cart.css" />
+    <script type="text/javascript" src="js/cart.js" defer="defer"></script>
+</head>
+<body>
+    <div class="cart-container">
+        <p><a href="catalogue.xhtml">Continue shopping</a></p>
+        <h1>Shopping Cart</h1>
+        <p class="cart-item-count" id="cartItemCount" aria-live="polite">0 items in your bag</p>
+        <div id="cartItems"></div>
+        <div class="cart-actions">
+            <button type="button" id="clearCartButton">Clear cart</button>
+        </div>
+        <section class="cart-options" aria-label="Discount and shipping">
+            <form id="discountForm" class="discount-form">
+                <label for="discountCode">Discount code</label>
+                <div class="discount-entry">
+                    <input id="discountCode" name="discountCode" type="text" autocomplete="off" />
+                    <button type="submit" id="applyDiscountButton">Apply</button>
+                </div>
+                <p class="discount-help">SAVE10 takes 10% off items.</p>
+                <p id="discountMessage" class="discount-message" role="status" aria-live="polite"></p>
+            </form>
+            <fieldset class="shipping-options">
+                <legend>Shipping</legend>
+                <label><input type="radio" name="shippingMethod" value="normal" checked="checked" /> Normal <span>10% of discounted subtotal</span></label>
+                <label><input type="radio" name="shippingMethod" value="priority" /> Priority <span>10% + R15</span></label>
+            </fieldset>
+        </section>
+        <div class="cart-summary">
+            <h2>Cart Summary</h2>
+            <div class="cart-totals">
+                <p>Items subtotal <span id="cartSubtotal">R0.00</span></p>
+                <p id="cartDiscountLine" hidden="hidden">Discount <span id="cartDiscount">-R0.00</span></p>
+                <p>Shipping (10%) <span id="cartShipping">R0.00</span></p>
+                <p id="cartPriorityLine" hidden="hidden">Priority shipping <span id="cartPriority">R15.00</span></p>
+                <p class="cart-grand-total">Total <span id="cartTotal">R0.00</span></p>
+            </div>
+            <button type="button" id="checkoutButton">Checkout</button>
+        </div>
+    </div>
+</body>
+</html>
