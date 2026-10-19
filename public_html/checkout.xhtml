@@ -55,6 +55,7 @@
 
                 <fieldset>
                     <legend>Card details</legend>
+                    <p class="payment-notice">Demo checkout: card details are only checked in your browser. No card is charged or sent to the server.</p>
                     <div class="checkout-fields">
                         <label class="field-wide">
                             Name on card
@@ -74,6 +75,19 @@
                         </label>
                     </div>
                     <p class="card-error" id="cardError" role="status" aria-live="polite"></p>
+                </fieldset>
+
+                <fieldset>
+                    <legend>PDF receipt delivery</legend>
+                    <p class="payment-notice">Choose how to receive your PDF receipt. WhatsApp delivery uses the phone number above.</p>
+                    <label class="receipt-opt-in">
+                        <input type="checkbox" name="emailReceipt" value="true" checked="checked" />
+                        Email my PDF receipt
+                    </label>
+                    <label class="receipt-opt-in">
+                        <input type="checkbox" name="whatsappReceipt" value="true" />
+                        Send my PDF receipt to me on WhatsApp
+                    </label>
                 </fieldset>
 
                 <p class="checkout-message" id="checkoutMessage" role="status" aria-live="polite"></p>
@@ -97,9 +111,10 @@
 
     <main class="checkout-complete" id="checkoutComplete" hidden="hidden">
         <h1>Order receipt</h1>
-        <p class="receipt-status">Order accepted · payment simulated</p>
+        <p class="receipt-status">Order accepted · demo payment approved</p>
         <dl class="receipt-details">
             <div><dt>Order reference</dt><dd id="receiptNumber"></dd></div>
+            <div><dt>Tracking code</dt><dd id="receiptTrackingCode"></dd></div>
             <div><dt>Date</dt><dd id="receiptDate"></dd></div>
             <div><dt>Customer</dt><dd id="receiptCustomer"></dd></div>
             <div><dt>Email</dt><dd id="receiptEmail"></dd></div>
@@ -114,11 +129,16 @@
             <div id="receiptPriorityRow" hidden="hidden"><dt>Priority shipping</dt><dd id="receiptPriority"></dd></div>
         </dl>
         <p class="receipt-total">Order total <strong id="receiptTotal"></strong></p>
-        <p class="receipt-note">Your order has been recorded by the Java backend.</p>
+        <p class="receipt-note" id="receiptNote">Your order was recorded. Payment is simulated.</p>
         <div class="receipt-actions">
             <button type="button" id="printReceiptButton">Print receipt</button>
+            <a id="downloadReceiptLink" href="#">Download PDF receipt</a>
+            <button type="button" id="retryEmailReceipt">Retry email</button>
+            <button type="button" id="retryWhatsAppReceipt">Retry WhatsApp</button>
+            <a id="trackOrderLink" href="order-tracking.xhtml">Track this order</a>
             <a href="catalogue.xhtml">Continue shopping</a>
         </div>
+        <p class="receipt-share-note" id="receiptDeliveryMessage" role="status" aria-live="polite"></p>
     </main>
 </body>
 </html>

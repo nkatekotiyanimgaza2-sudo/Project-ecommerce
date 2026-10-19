@@ -13,8 +13,9 @@ function createProduct(id, name, category, subcategory, price, description, imag
         category,
         subcategory,
         fit: fit || "Regular",
+        color: "Assorted",
         price,
-        description,
+
         image,
         sizes,
         rating: 4 + (id % 2),
@@ -34,7 +35,7 @@ function cataloguePrice(id, category) {
     return cents / 100;
 }
 
-const products = [
+let products = [
     createProduct(1, "Square Neck Top", "Women", "Tops", 299, "A soft, fitted top with a clean square neckline, easy to style from day to evening.", "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=480", womenSizes),
     createProduct(2, "Wide Leg Trousers", "Women", "Bottoms", 499, "Relaxed wide-leg trousers with a high-rise shape for a polished, comfortable fit.", "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=480", womenSizes),
     createProduct(3, "Shoulder Bag", "Women", "Bags", 349, "A versatile everyday shoulder bag with a spacious interior for your essentials.", "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=480", ["One size"]),
@@ -46,6 +47,66 @@ const products = [
     createProduct(9, "Kids Denim Jacket", "Kids", "Outerwear", 399, "A durable denim layer with a classic cut, designed for everyday play and outings.", "https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=480", kidsSizes),
     createProduct(10, "Plus Size Maxi Dress", "Women", "Dresses", 799, "A flowing maxi dress designed for a comfortable fit and an easy, confident look.", "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=480", ["L", "XL", "XXL"], "Plus Size")
 ];
+let databaseCatalogue = false;
+
+async function loadCatalogueFromDatabase() {
+    const backendOrigin = window.location.origin === 'http://localhost:8080'
+        ? window.location.origin
+        : 'http://127.0.0.1:8080';
+    const endpoints = [`${backendOrigin}/api/catalogue`];
+
+    for (const endpoint of endpoints) {
+        try {
+            const response = await fetch(endpoint);
+            if (!response.ok) {
+                continue;
+            }
+            const result = await response.json();
+            if (!Array.isArray(result)) {
+                throw new Error('The database catalogue returned an invalid response.');
+            }
+            if (result.length === 0) {
+                throw new Error('The database catalogue contains no active products.');
+            }
+            products = result.map(item => ({
+                id: Number(item.id),
+                name: item.name,
+                category: item.category,
+                subcategory: item.subcategory,
+                fit: item.fit || "Regular",
+                color: item.color || "Assorted",
+                description: item.description,
+                image: item.image,
+                price: Number(item.price),
+                rating: Number(item.rating),
+                reviews: Number(item.reviews),
+                sizes: (item.sizes || []).map(size => ({
+                    variantId: Number(size.variantId),
+                    label: size.label,
+                    stock: Number(size.stock)
+                }))
+            }));
+            databaseCatalogue = true;
+            return true;
+        } catch (error) {
+            if (error instanceof TypeError) {
+                continue;
+            }
+            throw error;
+        }
+    }
+    return false;
+}
+
+function escapeCatalogueText(value) {
+    return String(value).replace(/[&<>"']/g, character => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    })[character]);
+}
 
 const catalogueGroups = [
     { category: "Women", subcategory: "Dresses", sizes: womenSizes, description: "A considered dress with an easy-to-wear fit, made to bring a little polish to everyday plans.", images: ["photo-1496747611176-843222e1e57c", "photo-1595777457583-95e059d581b8", "photo-1585487000160-6ebcfceb0d03"], names: ["Pleated Wrap Midi", "Floral Day Dress", "Satin Slip Dress", "Button-Front Shirt Dress", "Linen Tiered Dress", "Smocked Summer Dress"] },
@@ -106,18 +167,22 @@ function renderProducts(productList) {
 
     grid.innerHTML = productList.map(product => {
         const saved = readWishlist().includes(product.id);
-        const imageUrl = product.image.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+        const imageUrl = escapeCatalogueText(product.image);
+        const totalStock = product.sizes.reduce((total, size) => total + getAvailableStock(product, size.label), 0);
+        const stockLabel = totalStock === 0 ? 'Out of stock'
+            : totalStock <= 3 ? `Only ${totalStock} left` : 'In stock';
         const card = `
             <div class="product-card">
-                <button type="button" class="wishlist-product${saved ? ' saved' : ''}" aria-label="${saved ? 'Remove' : 'Add'} ${product.name} ${saved ? 'from' : 'to'} wishlist" aria-pressed="${saved}" onclick="toggleWishlist(${product.id})">${saved ? '♥' : '♡'}</button>
-                <a class="product-open" href="#" aria-label="View ${product.name} details" onclick="showProductDetails(${product.id}); return false;">
-                    <img src="${imageUrl}" alt="${product.name}" />
+                <button type="button" class="wishlist-product${saved ? ' saved' : ''}" aria-label="${saved ? 'Remove' : 'Add'} ${escapeCatalogueText(product.name)} ${saved ? 'from' : 'to'} wishlist" aria-pressed="${saved}" onclick="toggleWishlist(${product.id})">${saved ? '♥' : '♡'}</button>
+                <a class="product-open" href="#" aria-label="View ${escapeCatalogueText(product.name)} details" onclick="showProductDetails(${product.id}); return false;">
+                    <img src="${imageUrl}" alt="${escapeCatalogueText(product.name)}" />
                 </a>
-                <h3><a class="product-open" href="#" onclick="showProductDetails(${product.id}); return false;">${product.name}</a></h3>
-                <p class="product-category-label">${product.category} / ${product.subcategory}</p>
+                <h3><a class="product-open" href="#" onclick="showProductDetails(${product.id}); return false;">${escapeCatalogueText(product.name)}</a></h3>
+                <p class="product-category-label">${escapeCatalogueText(product.category)} / ${escapeCatalogueText(product.subcategory)} · ${escapeCatalogueText(product.color)}</p>
                 <p class="price">R ${product.price.toFixed(2)}</p>
+                <p class="product-stock-label${totalStock === 0 ? ' sold-out' : totalStock <= 3 ? ' low-stock' : ''}">${stockLabel}</p>
                 <p class="rating">${'★'.repeat(product.rating)}${'☆'.repeat(5 - product.rating)} (${product.reviews})</p>
-                <button class="add-to-cart-btn" onclick="showProductDetails(${product.id})">Choose size &amp; view stock</button>
+                <button class="add-to-cart-btn" ${totalStock === 0 ? 'disabled="disabled"' : ''} onclick="showProductDetails(${product.id})">Choose size &amp; view stock</button>
             </div>
         `;
         return card;
@@ -169,9 +234,12 @@ function readInventory() {
 }
 
 function getAvailableStock(product, sizeLabel) {
+    const size = product.sizes.find(option => option.label === sizeLabel);
+    if (databaseCatalogue) {
+        return size ? size.stock : 0;
+    }
     const savedInventory = readInventory();
     const savedStock = savedInventory[product.id] && savedInventory[product.id][sizeLabel];
-    const size = product.sizes.find(option => option.label === sizeLabel);
     return savedStock === undefined ? (size ? size.stock : 0) : savedStock;
 }
 
@@ -231,13 +299,19 @@ function addToCart(productId) {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     const cartItem = cart.find(item => item.id === productId && item.selectedSize === selectedProductSize);
 
+    if (databaseCatalogue && cartItem && cartItem.quantity >= availableStock) {
+        document.getElementById('productDetailMessage').innerText = 'Your bag already contains all available stock in this size.';
+        return;
+    }
     if (cartItem) {
         cartItem.quantity++;
     } else {
         cart.push({ ...product, selectedSize: selectedProductSize, quantity: 1 });
     }
 
-    setAvailableStock(product, selectedProductSize, availableStock - 1);
+    if (!databaseCatalogue) {
+        setAvailableStock(product, selectedProductSize, availableStock - 1);
+    }
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
     const sizeSelect = document.getElementById('productDetailSize');
@@ -261,13 +335,23 @@ function updateCartCount() {
 function setAccountMode(mode) {
     accountMode = mode;
     const registering = mode === 'register';
+    const resetting = mode === 'reset';
     document.getElementById('nameField').hidden = !registering;
-    document.getElementById('confirmField').hidden = !registering;
+    document.getElementById('confirmField').hidden = !registering && !resetting;
     document.getElementById('accountName').required = registering;
-    document.getElementById('accountConfirm').required = registering;
-    document.getElementById('accountPassword').autocomplete = registering ? 'new-password' : 'current-password';
-    document.getElementById('accountTitle').innerText = registering ? 'Create your account' : 'Welcome back';
-    document.getElementById('accountSubmit').innerText = registering ? 'Create account' : 'Sign in';
+    document.getElementById('accountConfirm').required = registering || resetting;
+    document.getElementById('accountPassword').autocomplete = registering || resetting ? 'new-password' : 'current-password';
+    document.getElementById('passwordLabelText').innerText = resetting ? 'New password' : 'Password';
+    document.getElementById('accountTitle').innerText = registering
+        ? 'Create your account'
+        : resetting ? 'Reset your password' : 'Welcome back';
+    document.getElementById('accountSubmit').innerText = registering
+        ? 'Create account'
+        : resetting ? 'Reset password' : 'Sign in';
+    document.getElementById('accountModes').hidden = resetting;
+    document.getElementById('forgotPasswordButton').hidden = registering || resetting;
+    document.getElementById('backToLoginButton').hidden = !resetting;
+    document.getElementById('accountModeNote').hidden = !resetting;
     document.getElementById('loginMode').classList.toggle('selected', !registering);
     document.getElementById('registerMode').classList.toggle('selected', registering);
     document.getElementById('loginMode').setAttribute('aria-selected', String(!registering));
@@ -313,55 +397,182 @@ async function handleAccountSubmit(event) {
     message.innerText = 'Checking your details...';
 
     try {
-        const accounts = JSON.parse(localStorage.getItem(accountStorageKey) || '[]');
-        let account;
-
-        if (accountMode === 'register') {
-            const name = document.getElementById('accountName').value.trim();
+        if (accountMode === 'register' || accountMode === 'login') {
             const confirmation = document.getElementById('accountConfirm').value;
-            if (!name) {
+            const name = document.getElementById('accountName').value.trim();
+            if (accountMode === 'register' && !name) {
                 message.innerText = 'Enter your full name.';
                 return;
             }
+            if (accountMode === 'register' && password !== confirmation) {
+                message.innerText = 'Your passwords do not match.';
+                return;
+            }
+            const endpoint = window.location.origin === 'http://localhost:8080'
+                ? `${window.location.origin}/api/account`
+                : 'http://127.0.0.1:8080/api/account';
+            const request = new URLSearchParams({
+                mode: accountMode,
+                email,
+                password,
+                ...(accountMode === 'register' ? { name } : {})
+            });
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+                body: request.toString()
+            });
+            const account = await response.json();
+            if (!response.ok) {
+                throw new Error(account.error || 'The account request failed.');
+            }
+            sessionStorage.setItem(sessionStorageKey, JSON.stringify({
+                id: account.id,
+                name: account.name,
+                email: account.email
+            }));
+            document.getElementById('accountBackdrop').hidden = true;
+            form.reset();
+            setAccountMode('login');
+            updateAccountButton();
+            return;
+        }
+
+        const accounts = JSON.parse(localStorage.getItem(accountStorageKey) || '[]');
+        let account;
+
+        if (accountMode === 'reset') {
+            const confirmation = document.getElementById('accountConfirm').value;
             if (password !== confirmation) {
                 message.innerText = 'Your passwords do not match.';
                 return;
             }
-            if (accounts.some(savedAccount => savedAccount.email === email)) {
-                message.innerText = 'An account with this email already exists.';
-                return;
-            }
 
-            const salt = createSalt();
-            account = { name, email, salt, passwordHash: await hashPassword(password, salt) };
-            accounts.push(account);
-            localStorage.setItem(accountStorageKey, JSON.stringify(accounts));
-        } else {
             account = accounts.find(savedAccount => savedAccount.email === email);
-            if (!account || await hashPassword(password, account.salt) !== account.passwordHash) {
-                message.innerText = 'Email or password is incorrect.';
-                return;
+            if (account) {
+                const salt = createSalt();
+                account.salt = salt;
+                account.passwordHash = await hashPassword(password, salt);
+                localStorage.setItem(accountStorageKey, JSON.stringify(accounts));
             }
+            message.innerText = 'This resets browser-only demo accounts. Database accounts require a verified email reset.';
+            return;
         }
-
-        sessionStorage.setItem(sessionStorageKey, JSON.stringify({ name: account.name, email: account.email }));
-        document.getElementById('accountBackdrop').hidden = true;
-        form.reset();
-        setAccountMode('login');
-        updateAccountButton();
     } catch (error) {
-        message.innerText = 'Sign-in is unavailable in this browser session. Open the catalogue on localhost or HTTPS and try again.';
+        message.innerText = error.message || 'The account service is unavailable. Start the Java/MySQL backend.';
     }
 }
 
 // 4. INITIALIZE PAGE
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    let hasDatabaseCatalogue = false;
+    let catalogueLoadError = null;
+    try {
+        hasDatabaseCatalogue = await loadCatalogueFromDatabase();
+    } catch (error) {
+        catalogueLoadError = error;
+        console.error('The MySQL catalogue could not be read:', error);
+    }
+    document.getElementById('catalogueDataNotice').innerText = hasDatabaseCatalogue
+        ? 'Live catalogue and stock from MySQL.'
+        : catalogueLoadError
+            ? 'The live catalogue returned an error. Showing sample items only; orders require the backend.'
+            : 'Showing sample catalogue only. Live MySQL stock is unavailable; orders require the backend.';
     const searchInput = document.getElementById('searchInput');
+    const searchSuggestions = document.getElementById('searchSuggestions');
+    let activeSuggestionIndex = -1;
+
+    const closeSearchSuggestions = function() {
+        searchSuggestions.hidden = true;
+        searchInput.setAttribute('aria-expanded', 'false');
+        searchInput.removeAttribute('aria-activedescendant');
+        activeSuggestionIndex = -1;
+    };
+
+    const setActiveSuggestion = function(index) {
+        const options = Array.from(searchSuggestions.querySelectorAll('[role="option"]'));
+        if (options.length === 0) {
+            return;
+        }
+        activeSuggestionIndex = (index + options.length) % options.length;
+        options.forEach((option, optionIndex) => {
+            const isActive = optionIndex === activeSuggestionIndex;
+            option.setAttribute('aria-selected', String(isActive));
+            option.classList.toggle('active', isActive);
+        });
+        searchInput.setAttribute('aria-activedescendant', options[activeSuggestionIndex].id);
+    };
+
+    const renderSearchSuggestions = function(query) {
+        const normalizedQuery = query.trim().toLowerCase();
+        searchSuggestions.innerHTML = '';
+        activeSuggestionIndex = -1;
+        searchInput.removeAttribute('aria-activedescendant');
+
+        if (!normalizedQuery) {
+            closeSearchSuggestions();
+            return;
+        }
+
+        const matches = products
+            .filter(product => `${product.name} ${product.category} ${product.subcategory} ${product.description}`
+                .toLowerCase().includes(normalizedQuery))
+            .sort((first, second) => {
+                const firstStartsWith = first.name.toLowerCase().startsWith(normalizedQuery);
+                const secondStartsWith = second.name.toLowerCase().startsWith(normalizedQuery);
+                return Number(secondStartsWith) - Number(firstStartsWith) || first.name.localeCompare(second.name);
+            })
+            .slice(0, 6);
+
+        if (matches.length === 0) {
+            closeSearchSuggestions();
+            return;
+        }
+
+        matches.forEach((product, index) => {
+            const option = document.createElement('button');
+            const image = document.createElement('img');
+            const details = document.createElement('span');
+            const name = document.createElement('span');
+            const category = document.createElement('span');
+            const price = document.createElement('span');
+            option.type = 'button';
+            option.id = `searchSuggestion${index}`;
+            option.className = 'search-suggestion';
+            option.setAttribute('role', 'option');
+            option.setAttribute('aria-selected', 'false');
+            image.src = product.image;
+            image.alt = '';
+            image.loading = 'lazy';
+            details.className = 'search-suggestion-details';
+            name.className = 'search-suggestion-name';
+            name.innerText = product.name;
+            category.className = 'search-suggestion-category';
+            category.innerText = `${product.category} · ${product.subcategory}`;
+            price.className = 'search-suggestion-price';
+            price.innerText = `R${product.price.toFixed(2)}`;
+            details.append(name, category);
+            option.append(image, details, price);
+            option.addEventListener('click', function() {
+                searchInput.value = product.name;
+                closeSearchSuggestions();
+                filterProducts();
+                document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
+            });
+            searchSuggestions.appendChild(option);
+        });
+
+        searchSuggestions.hidden = false;
+        searchInput.setAttribute('aria-expanded', 'true');
+    };
+
     const filterProducts = function() {
         const query = searchInput.value.trim().toLowerCase();
         const maxPrice = Number(document.getElementById('priceFilter').value);
         const sizes = Array.from(document.querySelectorAll('.size-filter:checked')).map(input => input.value);
         const sortOrder = document.getElementById('sortProducts').value;
+        const color = document.getElementById('colorFilter').value;
+        const stockFilter = document.getElementById('stockFilter').value;
         const wishlist = readWishlist();
         const filtered = products.filter(product => {
             const matchesQuery = `${product.name} ${product.description} ${product.category} ${product.subcategory}`.toLowerCase().includes(query);
@@ -370,8 +581,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const matchesFit = selectedFit === 'all' || product.fit === selectedFit;
             const matchesPrice = product.price <= maxPrice;
             const matchesSize = sizes.length === 0 || product.sizes.some(size => sizes.includes(size.label));
+            const totalStock = product.sizes.reduce((total, size) => total + getAvailableStock(product, size.label), 0);
+            const matchesColor = color === 'all' || product.color.toLowerCase() === color.toLowerCase();
+            const matchesStock = stockFilter === 'all'
+                || (stockFilter === 'in-stock' && totalStock > 3)
+                || (stockFilter === 'low-stock' && totalStock > 0 && totalStock <= 3)
+                || (stockFilter === 'out-of-stock' && totalStock === 0);
             const matchesWishlist = !wishlistOnly || wishlist.includes(product.id);
-            return matchesQuery && matchesDepartment && matchesSubcategory && matchesFit && matchesPrice && matchesSize && matchesWishlist;
+            return matchesQuery && matchesDepartment && matchesSubcategory && matchesFit
+                && matchesPrice && matchesSize && matchesColor && matchesStock && matchesWishlist;
         });
 
         if (sortOrder === 'price-low') {
@@ -392,6 +610,15 @@ document.addEventListener('DOMContentLoaded', function() {
     sizeFilterList.innerHTML = availableSizeLabels.map(size =>
         `<li><label><input type="checkbox" class="size-filter" value="${size}" /> ${size}</label></li>`
     ).join('');
+    const colorFilter = document.getElementById('colorFilter');
+    Array.from(new Set(products.map(product => product.color).filter(Boolean)))
+        .sort((first, second) => first.localeCompare(second))
+        .forEach(color => {
+            const option = document.createElement('option');
+            option.value = color;
+            option.textContent = color;
+            colorFilter.appendChild(option);
+        });
 
     const departments = ['Women', 'Men', 'Kids'];
     categoryList.innerHTML = '<li><button type="button" class="category-filter active" data-department="all">All products <span>100</span></button></li>';
@@ -410,10 +637,34 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     categoryList.innerHTML += '<li><button type="button" class="fit-filter" data-fit="Plus Size">Plus size</button></li>';
 
-    searchInput.addEventListener('input', filterProducts);
+    searchInput.addEventListener('input', function() {
+        renderSearchSuggestions(searchInput.value);
+        filterProducts();
+    });
+    searchInput.addEventListener('keydown', function(event) {
+        const options = searchSuggestions.querySelectorAll('[role="option"]');
+        if (event.key === 'ArrowDown' && !searchSuggestions.hidden) {
+            event.preventDefault();
+            setActiveSuggestion(activeSuggestionIndex + 1);
+        } else if (event.key === 'ArrowUp' && !searchSuggestions.hidden) {
+            event.preventDefault();
+            setActiveSuggestion(activeSuggestionIndex < 0 ? options.length - 1 : activeSuggestionIndex - 1);
+        } else if (event.key === 'Enter' && activeSuggestionIndex >= 0 && !searchSuggestions.hidden) {
+            event.preventDefault();
+            options[activeSuggestionIndex].click();
+        } else if (event.key === 'Escape') {
+            closeSearchSuggestions();
+        }
+    });
     document.getElementById('searchForm').addEventListener('submit', function(event) {
         event.preventDefault();
+        closeSearchSuggestions();
         filterProducts();
+    });
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('#searchForm')) {
+            closeSearchSuggestions();
+        }
     });
 
     categoryList.addEventListener('click', function(event) {
@@ -442,8 +693,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     document.querySelectorAll('.size-filter').forEach(input => input.addEventListener('change', filterProducts));
     document.getElementById('sortProducts').addEventListener('change', filterProducts);
+    colorFilter.addEventListener('change', filterProducts);
+    document.getElementById('stockFilter').addEventListener('change', filterProducts);
     document.querySelector('.clear-btn').addEventListener('click', function() {
         searchInput.value = '';
+        closeSearchSuggestions();
         selectedDepartment = 'all';
         selectedSubcategory = 'all';
         selectedFit = 'all';
@@ -452,6 +706,8 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('priceFilterLabel').innerText = 'R1500+';
         document.querySelectorAll('.size-filter').forEach(input => { input.checked = false; });
         document.getElementById('sortProducts').value = 'featured';
+        colorFilter.value = 'all';
+        document.getElementById('stockFilter').value = 'all';
         categoryList.querySelectorAll('button').forEach(button => button.classList.toggle('active', button.getAttribute('data-department') === 'all'));
         updateWishlistCount();
         filterProducts();
@@ -466,6 +722,7 @@ document.addEventListener('DOMContentLoaded', function() {
         wishlistOnly = !wishlistOnly;
         if (wishlistOnly) {
             searchInput.value = '';
+            closeSearchSuggestions();
             selectedDepartment = 'all';
             selectedSubcategory = 'all';
             selectedFit = 'all';
@@ -556,6 +813,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     document.getElementById('registerMode').addEventListener('click', function() {
         setAccountMode('register');
+    });
+    document.getElementById('forgotPasswordButton').addEventListener('click', function() {
+        setAccountMode('reset');
+        document.getElementById('accountEmail').focus();
+    });
+    document.getElementById('backToLoginButton').addEventListener('click', function() {
+        setAccountMode('login');
+        document.getElementById('accountEmail').focus();
     });
     document.getElementById('accountForm').addEventListener('submit', handleAccountSubmit);
 });

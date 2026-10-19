@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Store operations - AllFit Fashion</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="css/operations.css" />
+    <script type="text/javascript" src="js/admin.js" defer="defer"></script>
+</head>
+<body>
+    <main class="operations-shell operations-wide">
+        <a href="catalogue.xhtml">← AllFit Fashion</a>
+        <p class="operations-kicker">PRIVATE STORE OPERATIONS</p>
+        <h1>Store dashboard</h1>
+        <p>Start the Java/MySQL backend with <code>start-java-backend.bat</code> and keep its terminal open before connecting. The admin token is checked only after the backend is reachable.</p>
+        <form id="adminAuth" class="operations-form admin-auth">
+            <label>Admin token<input name="token" type="password" autocomplete="off" required="required" /></label>
+            <button type="submit">Connect dashboard</button>
+        </form>
+        <p id="adminMessage" role="status" aria-live="polite"></p>
+        <section id="dashboard" hidden="hidden">
+            <div class="metric-grid">
+                <article><span>Active products</span><strong id="metricProducts">0</strong></article>
+                <article><span>Units in stock</span><strong id="metricStock">0</strong></article>
+                <article><span>Orders</span><strong id="metricOrders">0</strong></article>
+                <article><span>Recorded sales</span><strong id="metricSales">R0.00</strong></article>
+            </div>
+            <section>
+                <h2 id="productFormTitle">Add a product</h2>
+                <form id="productForm" class="operations-form admin-product-form">
+                    <input name="productId" type="hidden" />
+                    <label>Product name<input name="name" type="text" maxlength="160" required="required" /></label>
+                    <label>Category<select name="category" id="productCategory" required="required"></select></label>
+                    <label>Subcategory<select name="subcategory" id="productSubcategory" required="required"></select></label>
+                    <label>Fit<input name="fit" type="text" maxlength="40" value="Regular" required="required" /></label>
+                    <label>Colour<input name="color" type="text" maxlength="40" required="required" /></label>
+                    <label>Price (ZAR)<input name="price" type="number" min="0" step="0.01" required="required" /></label>
+                    <label>Image URL<input name="image" type="url" maxlength="600" required="required" /></label>
+                    <label class="field-full">Description<textarea name="description" maxlength="4000" required="required"></textarea></label>
+                    <label class="field-full">Sizes and stock (for example: S=8,M=4,L=0)<input name="variants" type="text" maxlength="1000" required="required" /></label>
+                    <div class="field-full"><button type="submit">Save product</button> <button type="button" id="resetProductForm">Clear form</button></div>
+                </form>
+            </section>
+            <section>
+                <h2>Products and inventory</h2>
+                <div class="table-scroll"><table>
+                    <thead><tr><th>Product</th><th>Category</th><th>Colour</th><th>Price</th><th>Stock by size</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody id="productRows"></tbody>
+                </table></div>
+            </section>
+            <section>
+                <h2>Customer accounts</h2>
+                <p>Includes registered accounts and guest checkout customers. Passwords are never displayed.</p>
+                <div class="table-scroll"><table>
+                    <thead><tr><th>Account</th><th>Email</th><th>Phone</th><th>Created</th><th>Type</th></tr></thead>
+                    <tbody id="accountRows"></tbody>
+                </table></div>
+            </section>
+            <section>
+                <h2>Recent orders</h2>
+                <div class="table-scroll"><table>
+                    <thead><tr><th>Reference / tracking code</th><th>Customer</th><th>Items</th><th>Total</th><th>Placed</th><th>Status</th></tr></thead>
+                    <tbody id="orderRows"></tbody>
+                </table></div>
+            </section>
+        </section>
+    </main>
+</body>
+</html>

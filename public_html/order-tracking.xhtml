@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Track an order - AllFit Fashion</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="css/operations.css" />
+    <script type="text/javascript" src="js/order-tracking.js" defer="defer"></script>
+</head>
+<body>
+    <main class="operations-shell">
+        <a href="catalogue.xhtml">← AllFit Fashion</a>
+        <p class="operations-kicker">ORDER CARE</p>
+        <h1>Track your order</h1>
+        <p>Enter the tracking code shown on your receipt and the email address used at checkout.</p>
+        <form id="trackingForm" class="operations-form">
+            <label>Tracking code<input name="trackingCode" type="text" required="required" maxlength="20" /></label>
+            <label>Email address<input name="email" type="email" required="required" maxlength="254" /></label>
+            <button type="submit">Find my order</button>
+        </form>
+        <p id="trackingMessage" role="status" aria-live="polite"></p>
+        <section id="trackingResult" hidden="hidden">
+            <h2 id="trackedReference"></h2>
+            <p>Tracking code: <strong id="trackedCode"></strong></p>
+            <p>Status: <strong id="trackedStatus"></strong></p>
+            <p>Placed: <span id="trackedDate"></span></p>
+            <p>Total: <strong id="trackedTotal"></strong></p>
+            <ol class="order-progress" id="orderProgress">
+                <li data-status="confirmed">Order placed</li>
+                <li data-status="processing">Processing</li>
+                <li data-status="shipped">Shipped</li>
+                <li data-status="delivered">Delivered</li>
+            </ol>
+            <h3>Items</h3>
+            <ul id="trackedItems"></ul>
+        </section>
+    </main>
+</body>
+</html>
