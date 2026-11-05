@@ -1,8 +1,14 @@
 # AllFit Fashion E-commerce App
 
 *Link* https://allfit-fashion.netlify.app/
+hosted with netlify
+*link*
+https://allfit-fashion.infinityfreeapp.com/?i=1
+hosted with infinity
+i used two hosting entities and use sql workbench to run the small database
 
 
+What is Allfit Fashion?
 
 A responsive clothing-store website built with XHTML, CSS and JavaScript, with a Java/MySQL backend for live catalogue inventory and checkout. The storefront keeps its current layout and styling; the new admin and order-tracking views are separate pages.
 
