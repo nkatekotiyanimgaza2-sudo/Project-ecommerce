@@ -1,4 +1,8 @@
-# AllFit Fashion
+# AllFit Fashion E-commerce App
+
+*Link* https://allfit-fashion.netlify.app/
+
+
 
 A responsive clothing-store website built with XHTML, CSS and JavaScript, with a Java/MySQL backend for live catalogue inventory and checkout. The storefront keeps its current layout and styling; the new admin and order-tracking views are separate pages.
 
